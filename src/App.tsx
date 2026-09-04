@@ -60,7 +60,7 @@ export default function App() {
     const saved = localStorage.getItem('pos_user');
     return saved ? JSON.parse(saved) : null;
   });
-  const [dark, setDark] = useLocalStorage<boolean>('pos_dark', false);
+  const [dark] = useLocalStorage<boolean>('pos_dark', false);
 
   const handleLogin = useCallback((email: string, password: string) => {
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
@@ -82,7 +82,7 @@ export default function App() {
   }, [dark]);
 
   if (!user) {
-    return <Login onLogin={handleLogin} dark={dark} setDark={setDark} />;
+    return <Login onLogin={handleLogin} dark={dark} />;
   }
 
   return <POSScreen email={user.email} onLogout={handleLogout} dark={dark} />;

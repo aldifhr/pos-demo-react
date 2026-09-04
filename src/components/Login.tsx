@@ -3,10 +3,9 @@ import { useState } from 'react';
 interface Props {
   onLogin: (email: string, password: string) => boolean;
   dark: boolean;
-  setDark: (v: boolean) => void;
 }
 
-export function Login({ onLogin, dark, setDark }: Props) {
+export function Login({ onLogin, dark }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -21,17 +20,12 @@ export function Login({ onLogin, dark, setDark }: Props) {
   return (
     <div className={`min-h-screen flex items-center justify-center transition-colors duration-200 ${dark ? 'bg-slate-950' : 'bg-slate-100'}`}>
       <div className={`rounded-xl shadow-sm p-8 max-w-sm w-full transition-colors duration-200 ${dark ? 'bg-slate-900 border border-slate-800' : 'bg-white border border-slate-200'}`}>
-        <div className="flex justify-between items-start mb-6">
-          <div className="text-center flex-1">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 ${dark ? 'bg-emerald-600/20' : 'bg-emerald-100'}`}>
-              <span className="text-2xl">🛒</span>
-            </div>
-            <h1 className={`text-xl font-bold ${dark ? 'text-white' : 'text-slate-800'}`}>POS System</h1>
-            <p className={`text-sm mt-1 ${dark ? 'text-slate-500' : 'text-slate-500'}`}>Sale Demo</p>
+        <div className="text-center mb-6">
+          <div className={`w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 ${dark ? 'bg-emerald-600/20' : 'bg-emerald-100'}`}>
+            <span className="text-2xl">🛒</span>
           </div>
-          <button onClick={() => setDark(!dark)} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${dark ? 'bg-slate-800 hover:bg-slate-700 text-yellow-500' : 'bg-slate-100 hover:bg-slate-200 text-slate-600'}`}>
-            {dark ? '☀️' : '🌙'}
-          </button>
+          <h1 className={`text-xl font-bold ${dark ? 'text-white' : 'text-slate-800'}`}>POS System</h1>
+          <p className={`text-sm mt-1 ${dark ? 'text-slate-500' : 'text-slate-500'}`}>Sale Demo</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
