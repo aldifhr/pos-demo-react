@@ -85,10 +85,10 @@ export default function App() {
     return <Login onLogin={handleLogin} dark={dark} setDark={setDark} />;
   }
 
-  return <POSScreen email={user.email} onLogout={handleLogout} dark={dark} setDark={setDark} />;
+  return <POSScreen email={user.email} onLogout={handleLogout} dark={dark} />;
 }
 
-function POSScreen({ email, onLogout, dark, setDark }: { email: string; onLogout: () => void; dark: boolean; setDark: (v: boolean) => void }) {
+function POSScreen({ email, onLogout, dark }: { email: string; onLogout: () => void; dark: boolean }) {
   const [products, setProducts] = useLocalStorage<Product[]>('pos_products', DEFAULT_PRODUCTS);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [receiptNum, setReceiptNum] = useLocalStorage<number>('pos_receipt_num', 1000);
