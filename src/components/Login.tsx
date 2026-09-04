@@ -50,6 +50,12 @@ export function Login({ onLogin, dark, setDark }: Props) {
           {error && <p className="text-xs text-red-500 bg-red-500/10 px-3 py-2 rounded-lg">{error}</p>}
           <button type="submit" className="w-full py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-500 transition">Login</button>
         </form>
+
+        <div className={`mt-4 p-3 rounded-lg text-center ${dark ? 'bg-slate-800/50' : 'bg-slate-50'}`}>
+          <p className={`text-xs mb-1 ${dark ? 'text-slate-500' : 'text-slate-500'}`}>Demo Credentials</p>
+          <p className={`text-xs font-medium ${dark ? 'text-slate-400' : 'text-slate-600'}`}>Email: test@admin.com</p>
+          <p className={`text-xs font-medium ${dark ? 'text-slate-400' : 'text-slate-600'}`}>Password: admin</p>
+        </div>
       </div>
     </div>
   );

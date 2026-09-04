@@ -254,15 +254,6 @@ function POSScreen({ email, onLogout, dark, setDark }: { email: string; onLogout
         <div className={`p-4 border-t ${dark ? 'border-slate-800' : 'border-slate-200'}`}>
           <div className="flex items-center justify-between mb-3">
             <span className={`text-xs ${dark ? 'text-slate-500' : 'text-slate-500'}`}>{email}</span>
-            <button
-              onClick={() => setDark(!dark)}
-              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                dark ? 'bg-slate-800 hover:bg-slate-700 text-yellow-500' : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
-              }`}
-              title="Toggle dark mode"
-            >
-              {dark ? '☀️' : '🌙'}
-            </button>
           </div>
           <div className="flex gap-2">
             <button onClick={resetAll} className="flex-1 py-2 text-xs bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition">Reset</button>
