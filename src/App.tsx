@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { ProductGrid } from './components/ProductGrid';
+import { ProductModal } from './components/ProductModal';
 import { Cart } from './components/Cart';
 import { Receipt } from './components/Receipt';
 import { Payment } from './components/Payment';
@@ -94,9 +95,12 @@ function POSScreen({ email, onLogout, dark, setDark }: { email: string; onLogout
   const [sales, setSales] = useLocalStorage<SaleRecord[]>('pos_sales', []);
   const [showReceipt, setShowReceipt] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
+  const [showProductModal, setShowProductModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [activeTab, setActiveTab] = useState<'sale' | 'reports'>('sale');
   const [lastSale, setLastSale] = useState<SaleRecord | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const storedVersion = Number(localStorage.getItem('pos_version') || '0');
@@ -110,7 +114,11 @@ function POSScreen({ email, onLogout, dark, setDark }: { email: string; onLogout
   }, [products]);
 
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
-  const filteredProducts = selectedCategory === 'All' ? products : products.filter(p => p.category === selectedCategory);
+  const filteredProducts = products.filter(p => {
+    const matchCat = selectedCategory === 'All' || p.category === selectedCategory;
+    const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchCat && matchSearch;
+  });
 
   const addToCart = useCallback((productId: number) => {
     setProducts(prev => prev.map(p =>
@@ -170,6 +178,32 @@ function POSScreen({ email, onLogout, dark, setDark }: { email: string; onLogout
 
   const cancelPayment = useCallback(() => setShowPayment(false), []);
   const closeReceipt = useCallback(() => setShowReceipt(false), []);
+
+  const handleSaveProduct = useCallback((product: Product) => {
+    setProducts(prev => {
+      const exists = prev.find(p => p.id === product.id);
+      if (exists) {
+        return prev.map(p => p.id === product.id ? product : p);
+      }
+      return [...prev, product];
+    });
+    setShowProductModal(false);
+    setEditingProduct(null);
+  }, [setProducts]);
+
+  const handleDeleteProduct = useCallback((id: number) => {
+    setProducts(prev => prev.filter(p => p.id !== id));
+  }, [setProducts]);
+
+  const handleEditProduct = useCallback((product: Product) => {
+    setEditingProduct(product);
+    setShowProductModal(true);
+  }, []);
+
+  const handleAddProduct = useCallback(() => {
+    setEditingProduct(null);
+    setShowProductModal(true);
+  }, []);
 
   const resetAll = useCallback(() => {
     if (!confirm('Reset all data?')) return;
@@ -259,6 +293,17 @@ function POSScreen({ email, onLogout, dark, setDark }: { email: string; onLogout
                     </button>
                   ))}
                 </div>
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className={`px-3 py-1.5 text-xs rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 ${dark ? 'bg-slate-800 text-white border-slate-700' : 'border border-slate-300'}`}
+                />
+                <button
+                  onClick={handleAddProduct}
+                  className="px-3 py-1.5 text-xs bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 font-medium"
+                >+ Add</button>
               </div>
               <div className="text-right">
                 <div className={`text-sm font-bold ${dark ? 'text-white' : 'text-slate-700'}`}>Receipt #{receiptNum}</div>
@@ -268,7 +313,14 @@ function POSScreen({ email, onLogout, dark, setDark }: { email: string; onLogout
 
             <div className="flex-1 flex overflow-hidden">
               <div className="flex-1 p-6 overflow-y-auto">
-                <ProductGrid products={filteredProducts} onAdd={addToCart} dark={dark} />
+                <ProductGrid
+                  products={filteredProducts}
+                  onAdd={addToCart}
+                  onEdit={handleEditProduct}
+                  onDelete={handleDeleteProduct}
+                  dark={dark}
+                  search={searchQuery}
+                />
               </div>
 
               <div className={`w-96 border-l p-4 overflow-y-auto transition-colors duration-200 ${dark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
@@ -297,6 +349,15 @@ function POSScreen({ email, onLogout, dark, setDark }: { email: string; onLogout
 
       {showReceipt && lastSale && (
         <Receipt receiptNum={receiptNum} sale={lastSale} onClose={closeReceipt} dark={dark} />
+      )}
+
+      {showProductModal && (
+        <ProductModal
+          product={editingProduct}
+          onSave={handleSaveProduct}
+          onClose={() => { setShowProductModal(false); setEditingProduct(null); }}
+          dark={dark}
+        />
       )}
     </div>
   );
